@@ -1,19 +1,32 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
-import DefaultButton from "../../Components/Common/DefaultButton";
-import ExplanationCard from "../../Components/Explanation/ExplanationCard";
-import {useNavigation} from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
+
+import ExplanationCard from "../../components/Explanation/ExplanationCard";
+import DefaultButton from "../../components/Common/DefaultButton";
+import ChangeNavigationService from "../../service/ChangeNavigationService";
 
 export default function AppExplanation() {
-
   const navigation = useNavigation();
+	const [showHome, setShowHome] = useState("false");
+  const startDate = new Date();
+  const appStartData = `${startDate.getFullYear()}-${startDate.getMonth()}-${startDate.getDate()}`;
 
-	/* function handleSetShowHome() {
+  function handleNavHome() {
     navigation.navigate("Home");
-  } */
+  }
 
-  function handleNavHome(){
-    navigation.navigate("Home");
+	function handleSetShowHome() {
+    if (showHome !== "true") {
+      ChangeNavigationService.setShowHome({ showHome: "true", appStartData })
+        .then(() => console.log(`Sucesso! ${showHome} ${appStartData}`))
+        .catch((err) => console.log(err));
+      setShowHome("true");
+
+      handleNavHome();
+    }
+
+    handleNavHome();
   }
 
   return (
@@ -23,7 +36,7 @@ export default function AppExplanation() {
           <Text style={styles.title}>
             Antes, deixa {"\n"} eu te explicar...
           </Text>
-					<ExplanationCard />
+          <ExplanationCard />
           <Text style={styles.descriptionCta}>
             Pronto(a) para subir de nível na vida?
           </Text>
@@ -33,7 +46,7 @@ export default function AppExplanation() {
           </Text>
           <DefaultButton
             buttonText={"Continuar"}
-            handlePress={handleNavHome}
+            handlePress={handleSetShowHome}
             width={250}
             height={50}
           />

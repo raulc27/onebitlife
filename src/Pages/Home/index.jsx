@@ -1,26 +1,38 @@
 import React, { useEffect, useState } from "react";
-import { useNavigation } from "@react-navigation/native";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
 
-import LifeStatus from "../../Components/Common/LifeStatus";
-import StatusBar from "../../Components/Home/StatusBar";
+import LifeStatus from "../../components/Common/LifeStatus";
+import StatusBar from "../../components/Home/StatusBar";
+import EditHabit from "../../components/Home/EditHabit";
 
-export default function Home() {
-  const navigation = useNavigation();
-	const [mindHabit, setMindHabit] = useState();
-  const [moneyHabit, setMoneyHabit] = useState();
-  const [bodyHabit, setBodyHabit] = useState();
-  const [funHabit, setFunHabit] = useState();
+export default function Home({ route }) {
+	const navigation = useNavigation();
+	const [robotDaysLife, setRobotDaysLife] = useState();
+  const today = new Date();
 
   function handleNavExplanation() {
     navigation.navigate("AppExplanation");
   }
 
+	useEffect(() => {
+    ChangeNavigationService.checkShowHome(1)
+    .then((showHome) => {
+      const formDate = `${today.getFullYear()}-${today.getMonth()}-${today.getDate()}`;
+      const checkDays =
+        new Date(formDate) - new Date(showHome.appStartData) + 1;
+
+	      setRobotDaysLife(checkDays.toString().padStart(2, "0"));
+    })
+      .catch((err) => console.log(err));
+  }, [route.params]);
+
 	return (
     <View style={styles.container}>
       <ScrollView>
         <View style={{ alignItems: "center" }}>
-          <Text style={styles.dailyChecks}>❤️ 20 dias - ✔️ 80 checks</Text>
+          <Text style={styles.dailyChecks}>
+            ❤️ {robotDaysLife} {robotDaysLife === "01" ? "dia" : "dias"} - ✔️ 80 Checks
+          </Text>
 
           <LifeStatus />
 
@@ -95,13 +107,5 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 18,
     marginTop: 40,
-  },
-  explanationText: {
-    color: "white",
-    fontSize: 16,
-    fontWeight: "bold",
-    textAlign: "center",
-    paddingTop: 15,
-    paddingBottom: 25,
   },
 });
