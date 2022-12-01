@@ -8,10 +8,15 @@ import {
   ScrollView,
 } from "react-native";
 
-import { useNavigation } from "@react-navigation/native";
+import SelectHabit from "../../components/HabitPage/SelectHabit";
+import SelectFrequency from "../../components/HabitPage/SelectFrequency";
+import Notification from "../../components/HabitPage/Notification";
 
 export default function HabitPage({ route }) {
 	const navigation = useNavigation();
+	const [habitInput, setHabitInput] = useState();
+  const [frequencyInput, setFrequencyInput] = useState();
+  const [notificationToggle, setNotificationToggle] = useState();
 
 	const { create, habit } = route.params;
 
@@ -32,8 +37,29 @@ export default function HabitPage({ route }) {
             <Text style={styles.title}>Configurações {"\n"} de hábito</Text>
             <Text style={styles.inputText}>Área</Text>
             <View style={styles.inputContainer}>
-              <Text style={styles.area}>{habit?.habitArea}</Text>
+              <Text style={styles.area}>{habitArea}</Text>
             </View>
+
+            <Text style={styles.inputText}>Hábito</Text>
+            <SelectHabit
+              area={habitArea}
+              currentHabit={habitName}
+              habitInput={setHabitInput}
+            />
+
+            <Text style={styles.inputText}>Frequência</Text>
+            <SelectFrequency
+              currentFrequency={habitFrequency}
+              frequencyInput={setFrequencyInput}
+            />
+
+            {frequencyInput === "Mensal" ? null : (
+              <Notification
+                notificationToggle={notificationToggle}
+                setNotificationToggle={setNotificationToggle}
+              />
+            )}
+
           </View>
         </View>
       </ScrollView>
@@ -58,6 +84,8 @@ const styles = StyleSheet.create({
   mainContent: {
     width: 250,
     alignSelf: "center",
+  },configButton: {
+    alignItems: "center",
   },
   title: {
     fontWeight: "bold",
